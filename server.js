@@ -68,7 +68,7 @@ let model = null;
 if (GEMINI_API_KEY) {
   genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash-latest',
+    model: 'gemini-1.5-flash',
     generationConfig: {
       responseMimeType: 'application/json',
     }
@@ -175,22 +175,21 @@ async function callExternalModel(imageBuffer, mimeType) {
       console.error('✅ DEBUG: Caught an error inside callExternalModel!');
       console.error('✅ DEBUG MESSAGE:', err.message);
       
-      // Return a special error payload so the user knows EXACTLY what the API said
+      // Return a professional error payload without leaking raw logs to the UI
       return {
         is_mock_fallback: true,
-        api_error_log: err.message,
         clinical_assessment: {
           risk_level: 'low',
-          anatomical_location: 'API Transmission Error',
-          primary_findings: `The Gemini API failed to process the request. Error: ${err.message}`,
-          differential_diagnosis: ['Connection Issue'],
-          precautionary_measures: ['Verify your API key is active', 'Check Google AI Studio Quotas'],
-          clinical_next_steps: ['Check server console logs']
+          anatomical_location: 'System Offline',
+          primary_findings: "The Clinical Intelligence Gateway is currently experiencing high latency or a configuration mismatch. Automated observation is temporarily suspended.",
+          differential_diagnosis: ['Pending Live Analysis'],
+          precautionary_measures: ['Verify clinical connectivity settings', 'Retry scan in 60 seconds'],
+          clinical_next_steps: ['Check network infrastructure', 'Ensure API Key validity in .env']
         },
-        ml_confidence_metrics: { overall_confidence: 0, class_probabilities: { probability_normal_variant: 1, probability_benign_lesion: 0, probability_opmd: 0, probability_frank_malignancy: 0 }, image_quality_auc_impact: 'Network Error' },
-        deployment_and_routing: { recommended_triage_action: 'RETRY', target_time_to_referral: 'N/A', clinical_justification: 'Hardware/Cloud Gateway Interruption' },
-        estimated_performance_metrics: { note: 'N/A', estimated_npv_for_this_case: 'N/A' },
-        disclaimer: `CRITICAL API ERROR: ${err.message}`
+        ml_confidence_metrics: { overall_confidence: 0, class_probabilities: { probability_normal_variant: 1, probability_benign_lesion: 0, probability_opmd: 0, probability_frank_malignancy: 0 }, image_quality_auc_impact: 'Network Interruption' },
+        deployment_and_routing: { recommended_triage_action: 'RETRY SCAN', target_time_to_referral: 'N/A', clinical_justification: 'Internal Gateway Exception' },
+        estimated_performance_metrics: { note: 'Analysis aborted.', estimated_npv_for_this_case: 'N/A' },
+        disclaimer: 'System encountered a processing exception. Please retry.'
       };
     }
   } else {
