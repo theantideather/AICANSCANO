@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, ShieldAlert, Activity, Shield, Microscope, Sparkles, AlertCircle, Database } from 'lucide-react';
+import { Upload, X, ShieldAlert, Activity, Shield, Microscope, Sparkles, AlertCircle, Database, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type RiskLevel = 'low' | 'moderate' | 'high';
@@ -12,8 +12,9 @@ interface AnalysisResult {
     risk_level: RiskLevel;
     primary_findings: string;
     differential_diagnosis: string[];
-    anatomical_location_prob: string;
-    lesion_morphology_notes: string;
+    anatomical_location: string;
+    precautionary_measures: string[];
+    clinical_next_steps: string[];
   };
   ml_confidence_metrics: {
     overall_confidence: number;
@@ -39,6 +40,7 @@ interface AnalysisResult {
     dataset_diversity_score: string;
   };
   disclaimer: string;
+  is_mock_fallback?: boolean;
 }
 
 export const AnalysisSection: React.FC = () => {
@@ -257,6 +259,20 @@ export const AnalysisSection: React.FC = () => {
                 className="space-y-16"
               >
                 {/* Result Control Center */}
+                {result.is_mock_fallback && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-6 rounded-2xl bg-red-950/40 border border-red-500/50 flex items-center justify-center gap-4 text-red-200"
+                  >
+                    <AlertTriangle className="w-6 h-6 text-red-400 animate-pulse" />
+                    <div className="font-semibold text-sm">
+                       <span className="font-black uppercase tracking-widest text-red-400">Warning: Simulated Response — </span>
+                       No GEMINI_API_KEY detected on the server! Please add your API key in Render's Environment Variables to enable real AI tumor analysis. (Currently showing random mock data).
+                    </div>
+                  </motion.div>
+                )}
+                
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
                   <div className={cn(
                     "lg:col-span-1 p-12 rounded-[3.5rem] border flex flex-col items-center justify-center text-center space-y-8 relative overflow-hidden glass-card",
@@ -277,9 +293,12 @@ export const AnalysisSection: React.FC = () => {
 
                   <div className="lg:col-span-3 p-16 rounded-[3.5rem] glass-card space-y-12 relative">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-white/5 pb-10">
-                       <div className="space-y-2 text-left">
+                       <div className="space-y-4 text-left">
                          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Biometric Assessment</span>
                          <h4 className="text-3xl font-black text-white uppercase tracking-tighter italic">Full Morphology Intel</h4>
+                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/10 mt-2">
+                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Location: {result.clinical_assessment.anatomical_location}</span>
+                         </div>
                        </div>
                        <div className="text-left md:text-right">
                           <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-2 font-bold tracking-widest">Confidence Value</p>
@@ -298,13 +317,26 @@ export const AnalysisSection: React.FC = () => {
                        <div className="space-y-8">
                           <div className="space-y-4">
                             <span className="text-[10px] uppercase font-black tracking-[0.4em] text-white/20">Differential Diagnosis Vector</span>
-                            <div className="flex flex-wrap gap-3">
-                              {result.clinical_assessment.differential_diagnosis.map((d, i) => (
-                                <span key={i} className="px-6 py-2 rounded-full bg-white/[0.03] border border-white/10 text-[10px] font-black text-white/60 lowercase tracking-widest italic uppercase">
-                                  {d}
-                                </span>
-                              ))}
-                            </div>
+                           <div className="space-y-4">
+                             <span className="text-[10px] uppercase font-black tracking-[0.4em] text-white/20">Precautionary Measures</span>
+                             <ul className="space-y-2 text-sm text-white/60 font-medium list-disc list-inside">
+                               {result.clinical_assessment.precautionary_measures?.map((m: string, i: number) => (
+                                 <li key={i}>{m}</li>
+                               ))}
+                             </ul>
+                           </div>
+                           
+                           <div className="space-y-4 pt-4 border-t border-white/5">
+                             <span className="text-[10px] uppercase font-black tracking-[0.4em] text-white/20">Immediate Next Steps</span>
+                             <ul className="space-y-2 text-sm text-[#D4AF37]/90 font-medium list-none">
+                               {result.clinical_assessment.clinical_next_steps?.map((step: string, i: number) => (
+                                 <li key={i} className="flex items-center gap-2">
+                                     <div className="w-1 h-1 rounded-full bg-[#D4AF37]" />
+                                     {step}
+                                 </li>
+                               ))}
+                             </ul>
+                           </div>
                           </div>
                        </div>
                     </div>

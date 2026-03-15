@@ -85,8 +85,11 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
 {
   "clinical_assessment": {
     "risk_level": "low" | "moderate" | "high",
+    "anatomical_location": "<Specific affected region, e.g., Lateral border of tongue, Buccal mucosa>",
     "primary_findings": "<Detailed paragraph of exact visual observations: color, texture, location, borders>",
-    "differential_diagnosis": ["<condition 1>", "<condition 2>", "<condition 3>"]
+    "differential_diagnosis": ["<condition 1>", "<condition 2>", "<condition 3>"],
+    "precautionary_measures": ["<actionable measure to halt malignancy progression 1>", "<measure 2>"],
+    "clinical_next_steps": ["<diagnostic or treatment step 1>", "<step 2>"]
   },
   "ml_confidence_metrics": {
     "overall_confidence": <float 0.0-1.0>,
@@ -187,10 +190,17 @@ function parseGeminiResponse(text) {
     return {
       clinical_assessment: {
         risk_level: finalRisk,
+        anatomical_location: parsed.clinical_assessment?.anatomical_location || 'Location indeterminate',
         primary_findings: parsed.clinical_assessment?.primary_findings || 'Analysis complete. See details below.',
         differential_diagnosis: Array.isArray(parsed.clinical_assessment?.differential_diagnosis) 
           ? parsed.clinical_assessment.differential_diagnosis 
-          : ['Findings indeterminate']
+          : ['Findings indeterminate'],
+        precautionary_measures: Array.isArray(parsed.clinical_assessment?.precautionary_measures)
+          ? parsed.clinical_assessment.precautionary_measures
+          : ['Minimize local irritants', 'Maintain oral hygiene'],
+        clinical_next_steps: Array.isArray(parsed.clinical_assessment?.clinical_next_steps)
+          ? parsed.clinical_assessment.clinical_next_steps
+          : ['Schedule clinical examination', 'Monitor for changes']
       },
       ml_confidence_metrics: {
         overall_confidence: Number(parsed.ml_confidence_metrics?.overall_confidence) || 0.5,
@@ -228,10 +238,14 @@ function parseGeminiResponse(text) {
 function generateMockResponse(forceRisk = null) {
   const scenarios = [
     {
+      is_mock_fallback: true,
       clinical_assessment: {
         risk_level: 'low',
+        anatomical_location: 'Buccal mucosa / Unspecified',
         primary_findings: 'Mucosal surface appears uniform in color and texture. No irregular borders, ulceration, or atypical discoloration identified. Architecture is well-preserved.',
-        differential_diagnosis: ['Normal mucosa', 'Mild frictional keratosis', 'Linea alba']
+        differential_diagnosis: ['Normal mucosa', 'Mild frictional keratosis', 'Linea alba'],
+        precautionary_measures: ['Maintain regular oral hygiene', 'Attend routine biannual dental checkups', 'Avoid tobacco products'],
+        clinical_next_steps: ['No immediate action required', 'Continue standard preventive care']
       },
       ml_confidence_metrics: {
         overall_confidence: 0.92,
@@ -254,10 +268,14 @@ function generateMockResponse(forceRisk = null) {
       }
     },
     {
+      is_mock_fallback: true,
       clinical_assessment: {
         risk_level: 'moderate',
+        anatomical_location: 'Lateral border of tongue / Buccal mucosa',
         primary_findings: 'Focal area displaying altered surface texture and slight color variation (mild leukoplakia) compared to adjacent healthy mucosa. Borders are somewhat demarcated but lack frank nodularity.',
-        differential_diagnosis: ['Homogeneous leukoplakia', 'Lichen planus', 'Focal hyperkeratosis']
+        differential_diagnosis: ['Homogeneous leukoplakia', 'Lichen planus', 'Focal hyperkeratosis'],
+        precautionary_measures: ['Cease all tobacco and alcohol consumption', 'Monitor lesion daily for rapid growth', 'Remove ill-fitting dental appliances causing friction'],
+        clinical_next_steps: ['Schedule specialist evaluation within 2-4 weeks', 'Consider incisional biopsy if lesion persists']
       },
       ml_confidence_metrics: {
         overall_confidence: 0.74,
@@ -280,10 +298,14 @@ function generateMockResponse(forceRisk = null) {
       }
     },
     {
+      is_mock_fallback: true,
       clinical_assessment: {
         risk_level: 'high',
+        anatomical_location: 'Floor of mouth / Ventral tongue',
         primary_findings: 'Prominent region exhibiting mixed red/white changes (erythroleukoplakia) with granular texture and poorly defined borders. Suspicion of submucosal induration.',
-        differential_diagnosis: ['Squamous cell carcinoma', 'Severe dysplasia / High-risk OPMD', 'Proliferative verrucous leukoplakia']
+        differential_diagnosis: ['Squamous cell carcinoma', 'Severe dysplasia / High-risk OPMD', 'Proliferative verrucous leukoplakia'],
+        precautionary_measures: ['Halt all potential chemical or physical irritants immediately', 'Prepare patient context files for oncological handoff', 'Do not alter or aggressively probe the lesion'],
+        clinical_next_steps: ['Urgent referral for histopathological biopsy', 'Comprehensive head and neck examination mapping', 'Potential baseline imaging (CT/MRI)']
       },
       ml_confidence_metrics: {
         overall_confidence: 0.89,
