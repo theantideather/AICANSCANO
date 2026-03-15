@@ -74,9 +74,27 @@ if (GEMINI_API_KEY) {
 // Medical Screening Prompt
 // ---------------------------------------------------------------------------
 const SCREENING_PROMPT = `You are a high-fidelity algorithmic oral pathologist and clinical AI system (AICanScanO).
-Analyze this intra-oral photograph and provide a highly rigorous, non-generic, clinically accurate risk assessment.
+Analyze the provided image and provide a highly rigorous, non-generic, clinically accurate risk assessment.
 
-IMPORTANT RULES:
+CRITICAL DIRECTIVE FIRST: You MUST verify if the image is an actual photograph of the inside of a human mouth (teeth, gums, tongue, mucosa). 
+If the image is NOT a clear intra-oral photograph (e.g., it is a screenshot of a computer interface, a landscape, an object, text, or an external face), YOU MUST IMMEDIATELY REJECT IT.
+If rejecting, respond ONLY with this exact JSON and nothing else:
+{
+  "clinical_assessment": {
+    "risk_level": "low",
+    "anatomical_location": "Invalid Input",
+    "primary_findings": "NON-CLINICAL IMAGE DETECTED. The provided media does not appear to be an intra-oral photograph. The intelligence system cannot perform pathology extraction on this image.",
+    "differential_diagnosis": ["Not Applicable"],
+    "precautionary_measures": ["Upload a clear, well-lit photograph of the oral cavity."],
+    "clinical_next_steps": ["Retake input media"]
+  },
+  "ml_confidence_metrics": { "overall_confidence": 0, "class_probabilities": { "probability_normal_variant": 1.0, "probability_benign_lesion": 0, "probability_opmd": 0, "probability_frank_malignancy": 0 }, "image_quality_auc_impact": "Critical Failure" },
+  "deployment_and_routing": { "recommended_triage_action": "REJECT PAYLOAD", "target_time_to_referral": "N/A", "clinical_justification": "Input media failed anatomical validation." },
+  "estimated_performance_metrics": { "note": "Processing aborted.", "estimated_npv_for_this_case": "N/A" },
+  "disclaimer": "Invalid payload."
+}
+
+If the image IS a valid intra-oral photograph, follow these IMPORTANT RULES:
 - AVOID generic "AI" phrasing. Use strict clinical and anatomical terminology.
 - Identify the exact anatomical location (e.g., ventral tongue, buccal mucosa, retromolar trigone).
 - Provide granular visual observations: mucosal color transitions, surface texture (e.g., granular, verrucous, smooth), bordering characteristics (e.g., sharp, diffuse, indurated).
@@ -230,8 +248,29 @@ function parseGeminiResponse(text) {
     console.error('Failed to parse Gemini response:', parseErr.message);
     console.error('Raw response:', text);
 
-    // Safe fallback matching new schema
-    return generateMockResponse('moderate');
+    // Safe fallback returning an error state rather than a fake diagnosis
+    return {
+      clinical_assessment: {
+        risk_level: 'low',
+        anatomical_location: 'System Fault',
+        primary_findings: 'The Intelligence Gateway received a malformed response from the AI. This typically occurs when an image is highly ambiguous, not a clinical scan, or violates processing constraints.',
+        differential_diagnosis: ['Format Exception'],
+        precautionary_measures: ['Ensure the image is a clear, well-lit intra-oral photograph.', 'Do not upload screenshots or non-medical images.'],
+        clinical_next_steps: ['Reset protocol and provide a valid clinical image.']
+      },
+      ml_confidence_metrics: {
+        overall_confidence: 0,
+        class_probabilities: { probability_normal_variant: 1, probability_benign_lesion: 0, probability_opmd: 0, probability_frank_malignancy: 0 },
+        image_quality_auc_impact: 'Critical Failure'
+      },
+      deployment_and_routing: {
+        recommended_triage_action: 'REJECT PAYLOAD',
+        target_time_to_referral: 'N/A',
+        clinical_justification: 'System was unable to parse diagnostic data from the foundational model.'
+      },
+      estimated_performance_metrics: { note: 'Processing aborted.', estimated_npv_for_this_case: 'N/A' },
+      disclaimer: 'System encountered a processing failure.'
+    };
   }
 }
 
