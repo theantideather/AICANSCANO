@@ -73,15 +73,18 @@ if (GEMINI_API_KEY) {
 // ---------------------------------------------------------------------------
 // Medical Screening Prompt
 // ---------------------------------------------------------------------------
-const SCREENING_PROMPT = `You are an expert AI clinician-scientist and oral pathology assessment system. 
-Analyze this intra-oral photograph and provide a highly detailed, clinically grounded risk assessment incorporating Clinical Screening Metrics, ML Confidence scores, and Deployment routing guidance.
+const SCREENING_PROMPT = `You are a high-fidelity algorithmic oral pathologist and clinical AI system (AICanScanO).
+Analyze this intra-oral photograph and provide a highly rigorous, non-generic, clinically accurate risk assessment.
 
 IMPORTANT RULES:
-- You are a SCREENING AID, not a diagnostic tool. Be explicit about this.
-- Be conservative: when uncertain about a lesion, lean toward higher risk (Sensitivity-optimized threshold).
-- Your output must be exhaustive, evaluating mucosal color, texture, borders, and specific locations.
+- AVOID generic "AI" phrasing. Use strict clinical and anatomical terminology.
+- Identify the exact anatomical location (e.g., ventral tongue, buccal mucosa, retromolar trigone).
+- Provide granular visual observations: mucosal color transitions, surface texture (e.g., granular, verrucous, smooth), bordering characteristics (e.g., sharp, diffuse, indurated).
+- Specify direct, actionable precautionary measures to halt progression (e.g., cessation of specific irritants).
+- Define immediate next steps (e.g., specific type of biopsy, referral timelines).
+- If you are ever unsure, elevate the risk to ensure high-sensitivity triage.
 
-Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
+Respond ONLY with valid JSON in this exact format (no markdown):
 {
   "clinical_assessment": {
     "risk_level": "low" | "moderate" | "high",

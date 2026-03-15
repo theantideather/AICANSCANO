@@ -317,7 +317,16 @@ export const AnalysisSection: React.FC = () => {
                        <div className="space-y-8">
                           <div className="space-y-4">
                             <span className="text-[10px] uppercase font-black tracking-[0.4em] text-white/20">Differential Diagnosis Vector</span>
-                           <div className="space-y-4">
+                            <div className="flex flex-wrap gap-3">
+                               {result.clinical_assessment.differential_diagnosis?.map((d: string, i: number) => (
+                                 <span key={i} className="px-6 py-2 rounded-full bg-white/[0.03] border border-white/10 text-[10px] font-black text-white/60 lowercase tracking-widest italic uppercase">
+                                   {d}
+                                 </span>
+                               ))}
+                             </div>
+                           </div>
+                           
+                           <div className="space-y-4 pt-4 border-t border-white/5">
                              <span className="text-[10px] uppercase font-black tracking-[0.4em] text-white/20">Precautionary Measures</span>
                              <ul className="space-y-2 text-sm text-white/60 font-medium list-disc list-inside">
                                {result.clinical_assessment.precautionary_measures?.map((m: string, i: number) => (
@@ -337,7 +346,6 @@ export const AnalysisSection: React.FC = () => {
                                ))}
                              </ul>
                            </div>
-                          </div>
                        </div>
                     </div>
                   </div>
