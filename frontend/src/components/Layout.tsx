@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Sparkles } from 'lucide-react';
+import SearchComponent from './ui/animated-glowing-search-bar';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -55,6 +56,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {item}
                 </a>
             ))}
+             <SearchComponent />
              <button 
                 onClick={() => document.getElementById('upload')?.scrollIntoView({ behavior: 'smooth' })}
                 className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] text-white hover:bg-white hover:text-black transition-all duration-500"
@@ -75,7 +77,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex flex-col gap-8 max-w-md">
               <div className="flex items-center gap-4">
                 <span className="text-4xl font-black tracking-tighter text-white italic">AICanScanO</span>
-                <div className="px-4 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] uppercase tracking-[0.4em] font-black text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.2)]">Powered by Orocare AI</div>
+                
+                <div className="relative group flex items-center justify-center isolation-auto">
+                    {/* Glowing animated conic gradient border background */}
+                    <div className="absolute -inset-[2px] rounded-full blur-[4px] bg-[conic-gradient(from_0deg,#d4af37,transparent_30%,transparent_70%,#d4af37)] animate-[spin_4s_linear_infinite] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Black core inner pill matching the background */}
+                    <div className="relative px-5 py-2 rounded-full bg-black flex items-center justify-center">
+                        <span className="text-[10px] uppercase tracking-[0.4em] font-black text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]">
+                            Powered by Orocare AI
+                        </span>
+                    </div>
+                </div>
               </div>
               <p className="text-sm text-white/20 leading-relaxed font-semibold tracking-wide uppercase">
                 High-fidelity clinical screening protocol for early oral cancer detection. Distributed clinical registry driving global health intelligence.
