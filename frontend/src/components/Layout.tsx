@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Sparkles } from 'lucide-react';
-import SearchComponent from './ui/animated-glowing-search-bar';
+import { Shield } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,6 +11,16 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen relative flex flex-col bg-black text-white selection:bg-white selection:text-black">
+      {/* Full Screen Animated Border Glow (from Search Component aesthetics) */}
+      <div className="fixed inset-0 pointer-events-none z-[999] p-[4px] opacity-100" style={{
+        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+        WebkitMaskComposite: 'xor',
+        maskComposite: 'exclude'
+      }}>
+        <div className="absolute top-1/2 left-1/2 w-[250vw] h-[250vh] -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] bg-[conic-gradient(#000,#402fb5_5%,#000_38%,#000_50%,#cf30aa_60%,#000_87%)]" />
+        <div className="absolute top-1/2 left-1/2 w-[250vw] h-[250vh] -translate-x-1/2 -translate-y-1/2 animate-[spin_12s_linear_infinite_reverse] bg-[conic-gradient(transparent,#18116a_15%,transparent_35%,transparent_50%,#6e1b60_65%,transparent_85%)] blur-[8px]" />
+      </div>
+
       {/* Permanent Smarter Glue Border */}
       <div className="glue-ambient" aria-hidden="true" />
       
@@ -56,7 +65,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {item}
                 </a>
             ))}
-             <SearchComponent />
              <button 
                 onClick={() => document.getElementById('upload')?.scrollIntoView({ behavior: 'smooth' })}
                 className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] text-white hover:bg-white hover:text-black transition-all duration-500"
