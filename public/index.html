@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AICanScanO — Oral Cancer Early Detection</title>
+  <meta name="description" content="AI-powered oral cancer screening tool. Upload an intra-oral photo and receive an AI-assisted risk overview. Early detection saves lives." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Ambient Background Orbs ===== -->
+  <div class="ambient-orb orb-1" aria-hidden="true"></div>
+  <div class="ambient-orb orb-2" aria-hidden="true"></div>
+  <div class="ambient-orb orb-3" aria-hidden="true"></div>
+
+  <!-- ===== Header / Nav ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo" aria-label="AICanScanO Home">
+        <span class="logo-icon">🔬</span>
+        <span class="logo-text">AICan<span class="accent">Scan</span>O</span>
+      </a>
+      <nav class="header-nav">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Hero Section ===== -->
+    <section id="hero" class="hero">
+      <div class="container hero-content">
+        <h1 class="hero-title">
+          Oral Cancer <span class="accent">Early Detection</span>
+        </h1>
+        <p class="hero-tagline">Upload a photo. Get a risk overview. Early detection matters.</p>
+        <p class="hero-subtext">
+          AICanScanO uses AI-assisted image analysis to help screen intra-oral photographs
+          for signs of suspicious lesions. This is a <strong>screening aid</strong>, not a
+          medical diagnosis.
+        </p>
+        <a href="#upload" class="btn btn-primary hero-cta">Start Screening</a>
+      </div>
+    </section>
+
+    <!-- ===== How It Works ===== -->
+    <section id="how-it-works" class="section how-it-works">
+      <div class="container">
+        <h2 class="section-title">How It <span class="accent">Works</span></h2>
+        <div class="steps-grid">
+          <div class="step-card glass-card">
+            <div class="step-number">1</div>
+            <div class="step-icon">📸</div>
+            <h3>Capture</h3>
+            <p>Take a clear intra-oral photo of the area of concern using your phone or camera.</p>
+          </div>
+          <div class="step-card glass-card">
+            <div class="step-number">2</div>
+            <div class="step-icon">🤖</div>
+            <h3>Analyze</h3>
+            <p>Our AI model examines the image for patterns associated with suspicious lesions.</p>
+          </div>
+          <div class="step-card glass-card">
+            <div class="step-number">3</div>
+            <div class="step-icon">📋</div>
+            <h3>Review</h3>
+            <p>Receive a structured risk overview with confidence scores and recommended next steps.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Upload & Analysis Section ===== -->
+    <section id="upload" class="section upload-section">
+      <div class="container">
+        <h2 class="section-title">Analyze Your <span class="accent">Image</span></h2>
+
+        <!-- Upload Card -->
+        <div id="upload-card" class="glass-card upload-card">
+          <div id="drop-zone" class="drop-zone">
+            <div class="drop-zone-inner">
+              <div class="upload-icon" aria-hidden="true">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <p class="drop-zone-text">Drag & drop your image here</p>
+              <p class="drop-zone-subtext">or</p>
+              <label for="file-input" class="btn btn-secondary">Tap to Upload</label>
+              <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" hidden />
+              <p class="drop-zone-hint">JPEG, PNG, or WebP · Max 10 MB</p>
+            </div>
+          </div>
+
+          <!-- Image Preview -->
+          <div id="preview-area" class="preview-area hidden">
+            <img id="preview-image" alt="Selected intra-oral image preview" />
+            <button id="remove-image" class="btn-icon" aria-label="Remove selected image" title="Remove image">✕</button>
+          </div>
+
+          <!-- Analyze Button -->
+          <button id="analyze-btn" class="btn btn-primary analyze-btn hidden" disabled>
+            <span class="btn-label">Analyze Image</span>
+            <span class="btn-spinner hidden" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-state hidden">
+          <div class="loading-pulse"></div>
+          <p class="loading-text">Analyzing lesion patterns…</p>
+          <p class="loading-subtext">This may take a few seconds</p>
+        </div>
+
+        <!-- Results Card -->
+        <div id="results-card" class="glass-card results-card hidden">
+          <!-- Detailed Dashboard (Initially Hidden) -->
+          <div id="resultsContent" class="hidden">
+            
+            <div class="result-header">
+              <div class="risk-badge" id="riskBadge">MODERATE RISK</div>
+              <p class="confidence-text">AI Confidence: <span id="confidenceScore">0%</span></p>
+            </div>
+
+            <!-- Clinical Assessment Section -->
+            <div class="metrics-section">
+              <h3><i class="fas fa-microscope"></i> Clinical Assessment</h3>
+              <div class="metric-card">
+                <h4>Primary Findings</h4>
+                <p id="primaryFindingsText">...</p>
+              </div>
+              <div class="metric-card">
+                <h4>Differential Diagnosis</h4>
+                <ul id="differentialList" class="custom-list"></ul>
+              </div>
+            </div>
+
+            <!-- ML Confidence Metrics Section -->
+            <div class="metrics-section">
+              <h3><i class="fas fa-project-diagram"></i> ML Class Probabilities</h3>
+              
+              <div class="prob-row">
+                <span class="prob-label">Normal Variant</span>
+                <div class="prob-bar-container"><div class="prob-bar bg-green" id="probNormal"></div></div>
+                <span class="prob-value" id="valNormal">0%</span>
+              </div>
+              
+              <div class="prob-row">
+                <span class="prob-label">Benign Lesion</span>
+                <div class="prob-bar-container"><div class="prob-bar bg-blue" id="probBenign"></div></div>
+                <span class="prob-value" id="valBenign">0%</span>
+              </div>
+              
+              <div class="prob-row">
+                <span class="prob-label">OPMD</span>
+                <div class="prob-bar-container"><div class="prob-bar bg-yellow" id="probOpmd"></div></div>
+                <span class="prob-value" id="valOpmd">0%</span>
+              </div>
+              
+              <div class="prob-row">
+                <span class="prob-label">Frank Malignancy</span>
+                <div class="prob-bar-container"><div class="prob-bar bg-red" id="probMalignant"></div></div>
+                <span class="prob-value" id="valMalignant">0%</span>
+              </div>
+              <p class="small-text mt-2 text-muted">Image Quality / AUC Impact: <span id="imageQualityVal"></span></p>
+            </div>
+
+            <!-- Deployment & Routing Section -->
+            <div class="metrics-section">
+              <h3><i class="fas fa-route"></i> Deployment & Routing Workflow</h3>
+              <div class="routing-grid">
+                <div class="route-box">
+                  <h5>Action</h5>
+                  <p id="triageAction" class="highlight-text">...</p>
+                </div>
+                <div class="route-box">
+                  <h5>Timeline</h5>
+                  <p id="referralTime">...</p>
+                </div>
+              </div>
+              <div class="metric-card mt-3">
+                <h4>Clinical Justification & Performance</h4>
+                <p id="clinicalJustification">...</p>
+                <div class="perf-stats mt-2">
+                  <span class="badge">Est. NPV: <span id="estNpv">High</span></span> 
+                  <span class="text-xs text-muted ml-2" id="perfNote"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Safety Disclaimer -->
+            <div class="disclaimer-alert mt-4">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p id="disclaimerText">This is an AI-assisted screening result, not a medical diagnosis.</p>
+            </div>
+
+            <button id="resetBtn" class="btn btn-outline w-full mt-4">Start New Analysis</button>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="glass-card error-state hidden">
+          <div class="error-icon">⚠️</div>
+          <p id="error-message">Something went wrong. Please try again.</p>
+          <button id="error-retry-btn" class="btn btn-secondary">Try Again</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ Section ===== -->
+    <section id="faq" class="section faq-section">
+      <div class="container">
+        <h2 class="section-title">Frequently Asked <span class="accent">Questions</span></h2>
+
+        <div class="faq-list">
+          <details class="faq-item glass-card" id="faq-1">
+            <summary class="faq-question">Can this replace a dentist or doctor?</summary>
+            <div class="faq-answer">
+              <p><strong>No — absolutely not.</strong> AICanScanO is a screening aid designed to help flag images
+              that may warrant further clinical evaluation. It does not replace professional clinical examination,
+              biopsy, or any form of medical diagnosis. Always consult a qualified healthcare professional.</p>
+            </div>
+          </details>
+
+          <details class="faq-item glass-card" id="faq-2">
+            <summary class="faq-question">How accurate is this tool?</summary>
+            <div class="faq-answer">
+              <p>AI models for oral lesion detection have shown high sensitivity and specificity in research
+              studies (AUC 0.85–0.98 on curated datasets). However, <strong>real-world performance may differ</strong>
+              due to image quality, lighting, device variation, and population differences. This tool has not been
+              clinically validated for diagnostic use and may produce incorrect results on individual cases.</p>
+            </div>
+          </details>
+
+          <details class="faq-item glass-card" id="faq-3">
+            <summary class="faq-question">What should I do if I'm worried about a lesion?</summary>
+            <div class="faq-answer">
+              <p>If you notice any persistent sore, white or red patch, lump, or unusual change in your mouth
+              lasting more than 2 weeks, <strong>seek professional care promptly</strong> — regardless of what any
+              screening tool says. Visit a dentist, oral medicine specialist, or your primary care physician.</p>
+            </div>
+          </details>
+
+          <details class="faq-item glass-card" id="faq-4">
+            <summary class="faq-question">Is my image stored or shared?</summary>
+            <div class="faq-answer">
+              <p>Images are processed for analysis and are not permanently stored or shared with third parties
+              in the current prototype. In a production deployment, strict data governance, encryption, and
+              consent frameworks would apply. See our Privacy policy for details.</p>
+            </div>
+          </details>
+
+          <details class="faq-item glass-card" id="faq-5">
+            <summary class="faq-question">Who is this tool for?</summary>
+            <div class="faq-answer">
+              <p>AICanScanO is designed for dentists, primary care physicians, community health workers, and
+              individuals who want an initial AI-assisted screening of intra-oral images. It is <strong>not a
+              substitute for clinical examination</strong> and should be used as a supplementary tool only.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-disclaimer">
+        <p><strong>⚠️ Important Disclaimer:</strong> This tool is experimental and does not provide medical
+        diagnoses. It is intended as an AI-assisted screening aid only. Always consult a qualified clinician
+        for any concern about oral health.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Clinical Info</a>
+        <a href="#">Contact</a>
+      </div>
+      <p class="footer-copy">© 2026 AICanScanO Project · Built for global health impact</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

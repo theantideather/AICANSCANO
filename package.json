@@ -1,0 +1,30 @@
+{
+  "name": "aicanscan-web",
+  "version": "1.0.0",
+  "description": "AICanScanO — AI-powered oral cancer early detection web application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "concurrently \"node server.js\" \"cd frontend && npm run dev\"",
+    "build": "cd frontend && npm run build",
+    "frontend:install": "cd frontend && npm install"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "keywords": [
+    "oral-cancer",
+    "screening",
+    "AI",
+    "health"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
