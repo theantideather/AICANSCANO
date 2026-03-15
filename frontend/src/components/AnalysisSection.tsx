@@ -2,8 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, ShieldAlert, AlertTriangle, Activity, Shield, Microscope, Binary, Sparkles, AlertCircle, Database } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Upload, X, ShieldAlert, Activity, Shield, Microscope, Sparkles, AlertCircle, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type RiskLevel = 'low' | 'moderate' | 'high';

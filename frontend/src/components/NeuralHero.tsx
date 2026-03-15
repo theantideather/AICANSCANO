@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, ChevronDown, Activity, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 export const NeuralHero: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
