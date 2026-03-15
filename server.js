@@ -61,14 +61,14 @@ const upload = multer({
 // ---------------------------------------------------------------------------
 // Gemini AI Client
 // ---------------------------------------------------------------------------
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
 let genAI = null;
 let model = null;
 
 if (GEMINI_API_KEY) {
   genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
+    model: 'gemini-1.5-flash-latest',
     generationConfig: {
       responseMimeType: 'application/json',
     }
@@ -169,18 +169,29 @@ async function callExternalModel(imageBuffer, mimeType) {
       const text = response.text();
 
       // Parse the JSON response from Gemini
-      return parseGeminiResponse(text);
+      const parsed = parseGeminiResponse(text);
+      return { ...parsed, is_live_api: true };
     } catch (err) {
-      console.error('Gemini API error:', err.message);
-
-      // If it's an auth error, report clearly
-      if (err.message.includes('API_KEY') || err.message.includes('401') || err.message.includes('PERMISSION_DENIED')) {
-        console.warn('⚠️ Invalid or unauthorized API key. Falling back to mock.');
-      } else if (err.message.includes('429') || err.message.includes('quota') || err.message.includes('RESOURCE_EXHAUSTED')) {
-        console.warn('⚠️ API quota or rate limit reached. Falling back to mock.');
-      }
-
-      console.warn('Falling back to mock response.');
+      console.error('✅ DEBUG: Caught an error inside callExternalModel!');
+      console.error('✅ DEBUG MESSAGE:', err.message);
+      
+      // Return a special error payload so the user knows EXACTLY what the API said
+      return {
+        is_mock_fallback: true,
+        api_error_log: err.message,
+        clinical_assessment: {
+          risk_level: 'low',
+          anatomical_location: 'API Transmission Error',
+          primary_findings: `The Gemini API failed to process the request. Error: ${err.message}`,
+          differential_diagnosis: ['Connection Issue'],
+          precautionary_measures: ['Verify your API key is active', 'Check Google AI Studio Quotas'],
+          clinical_next_steps: ['Check server console logs']
+        },
+        ml_confidence_metrics: { overall_confidence: 0, class_probabilities: { probability_normal_variant: 1, probability_benign_lesion: 0, probability_opmd: 0, probability_frank_malignancy: 0 }, image_quality_auc_impact: 'Network Error' },
+        deployment_and_routing: { recommended_triage_action: 'RETRY', target_time_to_referral: 'N/A', clinical_justification: 'Hardware/Cloud Gateway Interruption' },
+        estimated_performance_metrics: { note: 'N/A', estimated_npv_for_this_case: 'N/A' },
+        disclaimer: `CRITICAL API ERROR: ${err.message}`
+      };
     }
   } else {
     console.log(

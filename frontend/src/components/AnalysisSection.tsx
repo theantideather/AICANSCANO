@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, ShieldAlert, Activity, Shield, Microscope, Sparkles, AlertCircle, Database, AlertTriangle } from 'lucide-react';
+import { Upload, X, ShieldAlert, Activity, Shield, Microscope, Sparkles, AlertCircle, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type RiskLevel = 'low' | 'moderate' | 'high';
@@ -258,21 +258,6 @@ export const AnalysisSection: React.FC = () => {
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 className="space-y-16"
               >
-                {/* Result Control Center */}
-                {result.is_mock_fallback && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-6 rounded-2xl bg-red-950/40 border border-red-500/50 flex items-center justify-center gap-4 text-red-200"
-                  >
-                    <AlertTriangle className="w-6 h-6 text-red-400 animate-pulse" />
-                    <div className="font-semibold text-sm">
-                       <span className="font-black uppercase tracking-widest text-red-400">Warning: Simulated Response — </span>
-                       No GEMINI_API_KEY detected on the server! Please add your API key in Render's Environment Variables to enable real AI tumor analysis. (Currently showing random mock data).
-                    </div>
-                  </motion.div>
-                )}
-                
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
                   <div className={cn(
                     "lg:col-span-1 p-12 rounded-[3.5rem] border flex flex-col items-center justify-center text-center space-y-8 relative overflow-hidden glass-card",
